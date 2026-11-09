@@ -1,0 +1,18 @@
+<header class="topbar">
+  <div class="topbar__inner">
+    <a routerLink="/tasks" class="brand" aria-label="Gestor de tareas - inicio">
+      <span class="brand__logo" aria-hidden="true">✓</span>
+      <span>Gestor de tareas</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+      <a routerLink="/tasks" routerLinkActive="active" ariaCurrentWhenActive="page">Tareas</a>
+      <a routerLink="/users" routerLinkActive="active" ariaCurrentWhenActive="page">Usuarios</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <router-outlet />
+</main>
+
+<app-toast-container />

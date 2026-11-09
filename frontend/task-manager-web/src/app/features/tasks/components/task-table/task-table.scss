@@ -1,0 +1,33 @@
+.task-cell {
+  display: grid;
+  gap: .2rem;
+  max-width: 340px;
+
+  .muted { font-size: .85rem; }
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: .25rem; margin-top: .2rem; }
+.chip {
+  font-size: .72rem;
+  padding: .1rem .45rem;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chip--meta { background: var(--surface-muted); color: var(--text-muted); }
+
+.priority { font-size: .8rem; font-weight: 600; }
+.priority--high { color: var(--danger); }
+.priority--medium { color: var(--warning-strong); }
+.priority--low { color: var(--text-muted); }
+
+.actions-col { text-align: right; }
+.actions { display: flex; gap: .35rem; justify-content: flex-end; flex-wrap: wrap; }
+
+tr.busy { opacity: .55; pointer-events: none; }
+
+.select-sm { padding: .3rem .5rem; font-size: .85rem; min-width: 140px; }

@@ -1,0 +1,69 @@
+<div class="page-header">
+  <div>
+    <h1>Usuarios</h1>
+    <p class="muted">Colaboradores a los que se les pueden asignar tareas.</p>
+  </div>
+</div>
+
+<div class="layout-users">
+  <form class="card" [formGroup]="form" (ngSubmit)="submit()" novalidate aria-labelledby="user-form-title">
+    <header class="card__header"><h2 id="user-form-title">Nuevo usuario</h2></header>
+
+    <div class="form-field">
+      <label for="name">Nombre <span class="required" aria-hidden="true">*</span></label>
+      <input id="name" type="text" formControlName="name" autocomplete="name" [class.invalid]="errorOf(form.controls.name)" />
+      @if (errorOf(form.controls.name); as message) {
+        <small class="field-error">{{ message }}</small>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="email">Correo electrónico <span class="required" aria-hidden="true">*</span></label>
+      <input id="email" type="email" formControlName="email" autocomplete="email" [class.invalid]="errorOf(form.controls.email)" />
+      @if (errorOf(form.controls.email); as message) {
+        <small class="field-error">{{ message }}</small>
+      }
+    </div>
+
+    <footer class="card__footer">
+      <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+        {{ submitting() ? 'Guardando…' : 'Crear usuario' }}
+      </button>
+    </footer>
+  </form>
+
+  <section class="card" aria-labelledby="user-list-title">
+    <header class="card__header">
+      <h2 id="user-list-title">Listado</h2>
+      @if (store.loading()) {
+        <span class="spinner" role="status" aria-label="Cargando usuarios"></span>
+      }
+    </header>
+
+    @if (store.error(); as error) {
+      <div class="alert alert--error" role="alert">
+        <div><strong>{{ error.title }}</strong><span>{{ error.detail }}</span></div>
+        <button type="button" class="btn btn--sm" (click)="store.reload()">Reintentar</button>
+      </div>
+    } @else if (store.users().length === 0 && !store.loading()) {
+      <div class="empty-state"><p>No hay usuarios registrados.</p></div>
+    } @else {
+      <div class="table-wrapper">
+        <table class="table">
+          <thead>
+            <tr><th scope="col">Nombre</th><th scope="col">Correo</th><th scope="col">Registrado</th></tr>
+          </thead>
+          <tbody>
+            @for (user of store.users(); track user.id) {
+              <tr>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.createdAt | date: 'mediumDate' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</div>

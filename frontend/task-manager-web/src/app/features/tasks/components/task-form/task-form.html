@@ -1,0 +1,101 @@
+<form class="card" [formGroup]="form" (ngSubmit)="submit()" novalidate aria-labelledby="task-form-title">
+  <header class="card__header">
+    <h2 id="task-form-title">Nueva tarea</h2>
+  </header>
+
+  <div class="form-field">
+    <label for="title">Título <span class="required" aria-hidden="true">*</span></label>
+    <input id="title" type="text" formControlName="title" [maxlength]="limits.titleMaxLength"
+           placeholder="Ej. Configurar pipeline de despliegue" [class.invalid]="errorOf(form.controls.title)" />
+    @if (errorOf(form.controls.title); as message) {
+      <small class="field-error">{{ message }}</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="description">Descripción</label>
+    <textarea id="description" rows="2" formControlName="description" [maxlength]="limits.descriptionMaxLength"></textarea>
+    @if (errorOf(form.controls.description); as message) {
+      <small class="field-error">{{ message }}</small>
+    }
+  </div>
+
+  <div class="form-field">
+    <label for="userId">Asignar a <span class="required" aria-hidden="true">*</span></label>
+    <select id="userId" formControlName="userId" [class.invalid]="errorOf(form.controls.userId)">
+      <option [ngValue]="null" disabled>{{ usersLoading() ? 'Cargando usuarios…' : 'Seleccione un usuario' }}</option>
+      @for (user of users(); track user.id) {
+        <option [ngValue]="user.id">{{ user.name }} · {{ user.email }}</option>
+      }
+    </select>
+    @if (errorOf(form.controls.userId); as message) {
+      <small class="field-error">{{ message }}</small>
+    } @else if (!usersLoading() && users().length === 0) {
+      <small class="field-hint">No hay usuarios. Créelos en la sección Usuarios.</small>
+    }
+  </div>
+
+  <fieldset class="additional">
+    <legend>Información adicional <small>(se guarda como JSON)</small></legend>
+
+    <div class="grid-2">
+      <div class="form-field">
+        <label for="priority">Prioridad</label>
+        <select id="priority" formControlName="priority">
+          <option [ngValue]="null">Sin prioridad</option>
+          @for (priority of priorities; track priority) {
+            <option [ngValue]="priority">{{ priorityLabels[priority] }}</option>
+          }
+        </select>
+        @if (errorOf(form.controls.priority); as message) {
+          <small class="field-error">{{ message }}</small>
+        }
+      </div>
+
+      <div class="form-field">
+        <label for="dueDate">Fecha estimada</label>
+        <input id="dueDate" type="date" formControlName="dueDate" />
+        @if (errorOf(form.controls.dueDate); as message) {
+          <small class="field-error">{{ message }}</small>
+        }
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="tags">Etiquetas</label>
+      <input id="tags" type="text" formControlName="tags" placeholder="backend, api, urgente" />
+      @if (errorOf(form.controls.tags); as message) {
+        <small class="field-error">{{ message }}</small>
+      } @else {
+        <small class="field-hint">Separadas por coma.</small>
+      }
+    </div>
+
+    <div class="metadata" formArrayName="metadata">
+      <div class="metadata__header">
+        <span class="label">Metadatos</span>
+        <button type="button" class="btn btn--ghost btn--sm" (click)="addMetadataEntry()"
+                [disabled]="metadata.length >= limits.maxMetadataEntries">+ Agregar</button>
+      </div>
+      @for (entry of metadata.controls; track entry; let i = $index) {
+        <div class="metadata__row" [formGroupName]="i">
+          <input type="text" formControlName="key" placeholder="Clave" [attr.aria-label]="'Clave del metadato ' + (i + 1)"
+                 [class.invalid]="errorOf(entry.controls.key)" />
+          <input type="text" formControlName="value" placeholder="Valor" [attr.aria-label]="'Valor del metadato ' + (i + 1)" />
+          <button type="button" class="btn btn--icon" (click)="removeMetadataEntry(i)"
+                  [attr.aria-label]="'Quitar metadato ' + (i + 1)">×</button>
+        </div>
+      }
+      @if (errorOf(form.controls.metadata); as message) {
+        <small class="field-error">{{ message }}</small>
+      }
+    </div>
+  </fieldset>
+
+  <footer class="card__footer">
+    <button type="button" class="btn btn--ghost" (click)="reset()" [disabled]="submitting()">Limpiar</button>
+    <button type="submit" class="btn btn--primary" [disabled]="submitting()">
+      {{ submitting() ? 'Guardando…' : 'Crear tarea' }}
+    </button>
+  </footer>
+</form>

@@ -1,0 +1,65 @@
+<div class="table-wrapper">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Tarea</th>
+        <th scope="col">Asignada a</th>
+        <th scope="col">Prioridad</th>
+        <th scope="col">Fecha estimada</th>
+        <th scope="col">Creada</th>
+        <th scope="col">Estado</th>
+        <th scope="col" class="actions-col">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (task of tasks(); track task.id) {
+        <tr [class.busy]="busyIds().has(task.id)">
+          <td class="task-cell">
+            <strong>{{ task.title }}</strong>
+            @if (task.description) {
+              <span class="muted">{{ task.description }}</span>
+            }
+            @if (task.additionalInfo?.tags?.length || metadataEntries(task).length) {
+              <div class="chips">
+                @for (tag of task.additionalInfo?.tags ?? []; track tag) {
+                  <span class="chip">#{{ tag }}</span>
+                }
+                @for (entry of metadataEntries(task); track entry[0]) {
+                  <span class="chip chip--meta" [title]="entry[0] + ': ' + entry[1]">{{ entry[0] }}: {{ entry[1] }}</span>
+                }
+              </div>
+            }
+          </td>
+          <td>
+            <select class="select-sm" [value]="task.assignedUser.id" (change)="onReassign(task, $event)"
+                    [disabled]="busyIds().has(task.id)" [attr.aria-label]="'Reasignar ' + task.title">
+              @for (user of users(); track user.id) {
+                <option [value]="user.id" [selected]="user.id === task.assignedUser.id">{{ user.name }}</option>
+              }
+            </select>
+          </td>
+          <td>
+            @if (task.additionalInfo?.priority; as priority) {
+              <span class="priority" [class]="'priority priority--' + priority.toLowerCase()">{{ priorityLabels[priority] }}</span>
+            } @else {
+              <span class="muted">—</span>
+            }
+          </td>
+          <td>{{ task.additionalInfo?.dueDate ? (task.additionalInfo!.dueDate! | date: 'mediumDate') : '—' }}</td>
+          <td><time [attr.datetime]="task.createdAt">{{ task.createdAt | date: 'short' }}</time></td>
+          <td><span class="badge" [class]="'badge badge--' + task.status">{{ statusLabels[task.status] }}</span></td>
+          <td class="actions-col">
+            <div class="actions">
+              @for (next of task.allowedTransitions; track next) {
+                <button type="button" class="btn btn--sm" [class.btn--primary]="next !== 'Pending'"
+                        [disabled]="busyIds().has(task.id)" (click)="statusChange.emit({ task, status: next })">
+                  {{ transitionLabel(task.status, next) }}
+                </button>
+              }
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

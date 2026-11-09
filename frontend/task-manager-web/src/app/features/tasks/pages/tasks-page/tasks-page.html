@@ -1,0 +1,71 @@
+<div class="page-header">
+  <div>
+    <h1>Tareas</h1>
+    <p class="muted">Registre, asigne y haga seguimiento al estado de las tareas del equipo</p>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="layout__form">
+    <app-task-form [users]="usersStore.users()" [usersLoading]="usersStore.loading()" />
+  </aside>
+
+  <section class="card layout__list" aria-labelledby="task-list-title">
+    <header class="card__header">
+      <h2 id="task-list-title">
+        Listado
+        @if (store.page(); as page) {
+          <span class="count">{{ page.totalCount }}</span>
+        }
+      </h2>
+      @if (store.loading()) {
+        <span class="spinner" role="status" aria-label="Cargando tareas"></span>
+      }
+    </header>
+
+    <app-task-filters
+      [filters]="store.filters()"
+      [users]="usersStore.users()"
+      [hasActiveFilters]="store.hasActiveFilters()"
+      (filtersChange)="onFiltersChange($event)"
+      (reset)="store.resetFilters()" />
+
+    @if (store.error(); as error) {
+      <div class="alert alert--error" role="alert">
+        <div>
+          <strong>{{ error.title }}</strong>
+          <span>{{ error.detail }}</span>
+        </div>
+        <button type="button" class="btn btn--sm" (click)="store.reload()">Reintentar</button>
+      </div>
+    } @else if (store.tasks().length === 0 && !store.loading()) {
+      <div class="empty-state">
+        @if (store.hasActiveFilters()) {
+          <p>No hay tareas que coincidan con los filtros.</p>
+          <button type="button" class="btn btn--ghost" (click)="store.resetFilters()">Limpiar filtros</button>
+        } @else {
+          <p>Aún no hay tareas registradas. Cree la primera con el formulario</p>
+        }
+      </div>
+    } @else {
+      <app-task-table
+        [tasks]="store.tasks()"
+        [users]="usersStore.users()"
+        [busyIds]="store.busyIds()"
+        (statusChange)="onStatusChange($event)"
+        (reassign)="onReassign($event)" />
+
+      @if (store.page(); as page) {
+        @if (page.totalPages > 1) {
+          <nav class="pagination" aria-label="Paginación">
+            <button type="button" class="btn btn--sm btn--ghost" [disabled]="!page.hasPreviousPage || store.loading()"
+                    (click)="store.goToPage(page.page - 1)">← Anterior</button>
+            <span>Página {{ page.page }} de {{ page.totalPages }}</span>
+            <button type="button" class="btn btn--sm btn--ghost" [disabled]="!page.hasNextPage || store.loading()"
+                    (click)="store.goToPage(page.page + 1)">Siguiente →</button>
+          </nav>
+        }
+      }
+    }
+  </section>
+</div>

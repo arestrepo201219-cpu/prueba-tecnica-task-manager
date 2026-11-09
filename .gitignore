@@ -1,0 +1,24 @@
+# ---------- .NET ----------
+bin/
+obj/
+*.user
+*.suo
+.vs/
+TestResults/
+*.trx
+coverage*/
+
+# ---------- Angular / Node ----------
+node_modules/
+dist/
+.angular/
+*.tsbuildinfo
+
+# ---------- Editores / SO ----------
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---------- Secretos ----------
+*.env
+appsettings.*.local.json

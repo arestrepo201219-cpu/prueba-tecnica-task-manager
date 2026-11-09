@@ -1,0 +1,16 @@
+.additional {
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: .75rem 1rem .25rem;
+  margin: 0 0 1rem;
+
+  legend { padding: 0 .35rem; font-weight: 600; font-size: .85rem; color: var(--text-muted); }
+  legend small { font-weight: 400; }
+}
+
+.metadata {
+  margin-bottom: .75rem;
+
+  &__header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .35rem; }
+  &__row { display: grid; grid-template-columns: 1fr 1fr auto; gap: .4rem; margin-bottom: .4rem; }
+}
